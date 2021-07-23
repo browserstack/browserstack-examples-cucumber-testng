@@ -45,7 +45,8 @@ public class WebDriverFactory {
     private static final String BROWSERSTACK_USERNAME = "BROWSERSTACK_USERNAME";
     private static final String BROWSERSTACK_ACCESS_KEY = "BROWSERSTACK_ACCESS_KEY";
     private static final String BUILD_ID = "BUILD_ID";
-    private static final String DEFAULT_BUILD_NAME = "browserstack-examples-junit5";
+    private static final String DEFAULT_BUILD_NAME = "browserstack-examples-testng";
+    private static final String buildName = System.getenv("BROWSERSTACK_BUILD_NAME");
 
     private static final String WEBDRIVER_CHROME_DRIVER = "webdriver.chrome.driver";
     private static final String WEBDRIVER_GECKO_DRIVER = "webdriver.gecko.driver";
@@ -161,15 +162,16 @@ public class WebDriverFactory {
             platform.getCapabilities().getCapabilityMap().forEach(platformCapabilities::setCapability);
         }
         String user = remoteDriverConfig.getUser();
-        if (StringUtils.isNoneEmpty(System.getenv(BROWSERSTACK_USERNAME))) {
+        if (StringUtils.isNotEmpty(System.getenv(BROWSERSTACK_USERNAME))) {
             user = System.getenv(BROWSERSTACK_USERNAME);
         }
         String accessKey = remoteDriverConfig.getAccessKey();
-        if (StringUtils.isNoneEmpty(System.getenv(BROWSERSTACK_ACCESS_KEY))) {
+        if (StringUtils.isNotEmpty(System.getenv(BROWSERSTACK_ACCESS_KEY))) {
             accessKey = System.getenv(BROWSERSTACK_ACCESS_KEY);
         }
         platformCapabilities.setCapability("browserstack.user", user);
         platformCapabilities.setCapability("browserstack.key", accessKey);
+        System.out.println(user+":"+accessKey);
 
         if (isLocal) {
             platformCapabilities.setCapability("browserstack.localIdentifier", LocalFactory.getInstance().getLocalIdentifier());
@@ -258,16 +260,21 @@ public class WebDriverFactory {
     }
 
     private String createBuildName(String buildPrefix) {
-        if (StringUtils.isEmpty(buildPrefix)) {
-            buildPrefix = DEFAULT_BUILD_NAME;
+        if (StringUtils.isNotEmpty(buildName)){
+            return buildName;
         }
-        String buildName = buildPrefix;
+        else {
+            if (StringUtils.isEmpty(buildPrefix)) {
+                buildPrefix = DEFAULT_BUILD_NAME;
+            }
+            String buildName = buildPrefix;
 
-        String buildSuffix = this.defaultBuildSuffix;
-        if (StringUtils.isNotEmpty(System.getenv(BUILD_ID))) {
-            buildSuffix = System.getenv(BUILD_ID);
+            String buildSuffix = this.defaultBuildSuffix;
+            if (StringUtils.isNotEmpty(System.getenv(BUILD_ID))) {
+                buildSuffix = System.getenv(BUILD_ID);
+            }
+            return buildName + "-" + buildSuffix;
         }
-        return buildName + "-" + buildSuffix;
     }
 
 }

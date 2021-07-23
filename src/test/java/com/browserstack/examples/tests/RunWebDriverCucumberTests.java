@@ -18,6 +18,7 @@ import io.cucumber.testng.FeatureWrapper;
 import io.cucumber.testng.PickleWrapper;
 import io.cucumber.testng.TestNGCucumberRunner;
 
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -26,11 +27,10 @@ import io.cucumber.testng.TestNGCucumberRunner;
 @CucumberOptions(
   features = "classpath:features",
   glue = "com.browserstack.examples.stepdefs",
+  strict=true,
   plugin = {
     "pretty",
-    "html:reports/tests/cucumber/html",
     "timeline:reports/tests/cucumber/timeline",
-    "junit:reports/tests/cucumber/junit/cucumber.xml",
     "testng:reports/tests/cucumber/testng/cucumber.xml",
     "json:reports/tests/cucumber/json/cucumber.json"
   }
